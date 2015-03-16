@@ -197,7 +197,7 @@ class LedController(object):
                     self._send_command(kwargs.get("%s_cmd" % self.get_group_type(group), [None, None, None, None])[group-1])
                 else:
                     if self.get_group_type(group) == "white":
-                        cmd_tmp = self.WHITE_COMMANDS
+                        cmd_tmp = self.WHITE_COMMANDS.get(kwargs["command"])
                     elif self.get_group_type(group) == "rgbw":
                         cmd_tmp = self.RGBW_COMMANDS
                         if kwargs["command"] == 'color_to_byte':

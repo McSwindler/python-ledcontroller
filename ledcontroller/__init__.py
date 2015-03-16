@@ -186,7 +186,7 @@ class LedController(object):
                     self._send_command(self.WHITE_COMMANDS.get(kwargs["command"]))
                 if self.has_rgbw:
                     if kwargs["command"] == 'color_to_byte':
-                        command = (b'\x40', kwargs.get("byte", '').encode('utf8'))
+                        command = (b'\x40', kwargs.get("byte", b'\x00'))
                     else:
                         command = self.RGBW_COMMANDS.get(kwargs["command"])
                     self._send_command(command)
@@ -256,7 +256,7 @@ class LedController(object):
         if color == "white": # hack, as commands for setting color to white differ from other colors.
             self.white(group)
         elif type(color) is int:
-            self._send_to_group(group, command="color_to_byte", byte=chr(color))
+            self._send_to_group(group, command="color_to_byte", byte=chr(color).encode('utf8'))
         else:
             self._send_to_group(group, command="color_to_"+color)
         return color

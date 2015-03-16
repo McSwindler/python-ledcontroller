@@ -48,6 +48,7 @@ class TestRgbwLights(unittest.TestCase):
     def test_set_color(self):
         self.led.set_color("white")
         self.led.set_color("red")
+        self.led.set_color(156)
 
     def test_set_brightness(self):
         self.assertEquals(self.led.set_brightness(-1), 0, "negative brightness not clamped properly")

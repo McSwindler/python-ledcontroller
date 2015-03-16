@@ -186,7 +186,7 @@ class LedController(object):
                     self._send_command(self.WHITE_COMMANDS.get(kwargs["command"]))
                 if self.has_rgbw:
                     if kwargs["command"] == 'color_to_byte':
-                        command = (b'\x40', kwargs.get("byte", b'\x00'))
+                        command = (b'\x40', kwargs.get("byte", '').encode('utf8'))
                     else:
                         command = self.RGBW_COMMANDS.get(kwargs["command"])
                     self._send_command(command)

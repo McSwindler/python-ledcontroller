@@ -75,6 +75,7 @@ class LedController(object):
      "disco_faster": (b"\x44",),
      "disco_slower": (b"\x43",),
      "all_nightmode": (b"\xc1",),
+     "color_to_byte": (b"\x40"), 
      "color_to_violet": (b"\x40", b"\x00"),
      "color_to_royal_blue": (b"\x40", b"\x10"),
      "color_to_baby_blue": (b"\x40", b"\x20"),
@@ -184,7 +185,11 @@ class LedController(object):
                 if self.has_white:
                     self._send_command(self.WHITE_COMMANDS.get(kwargs["command"]))
                 if self.has_rgbw:
-                    self._send_command(self.RGBW_COMMANDS.get(kwargs["command"]))
+                    if kwargs["command"] == 'color_to_byte':
+                        command = (b'\x40', kwargs.get("byte", b'\x00'))
+                    else:
+                        command = self.RGBW_COMMANDS.get(kwargs["command"])
+                    self._send_command(command)
             else:
                 if group < 1 or group > 4:
                     raise AttributeError("Group must be between 1 and 4 (was %s)" % group)
@@ -195,7 +200,11 @@ class LedController(object):
                         cmd_tmp = self.WHITE_COMMANDS
                     elif self.get_group_type(group) == "rgbw":
                         cmd_tmp = self.RGBW_COMMANDS
-                    self._send_command(cmd_tmp.get(kwargs["command"]))
+                        if kwargs["command"] == 'color_to_byte':
+                            cmd_tmp = (b'\x40', kwargs.get("byte", b'\x00'))
+                        else:
+                            cmd_tmp = self.RGBW_COMMANDS.get(kwargs["command"])
+                    self._send_command(cmd_tmp)
 
     def on(self, group=None):
         """ Switches lights on. If group (1-4) is not specified,
@@ -246,6 +255,8 @@ class LedController(object):
             will be switched on and to specified color."""
         if color == "white": # hack, as commands for setting color to white differ from other colors.
             self.white(group)
+        elif type(color) is int:
+            self._send_to_group(group, command="color_to_byte", byte=chr(color))
         else:
             self._send_to_group(group, command="color_to_"+color)
         return color
